@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOST INVENTIONS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; background:#100c04; }
+body { font-family:'Courier Prime',monospace; color:#1e1208; }
+
+.page {
+  position: fixed; inset: 0;
+  overflow-y: auto; overflow-x: hidden;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.77,0,0.18,1);
+}
+.page-active { transform: translateX(0) !important; }
+.page-exit   { transform: translateX(-100%) !important; }
+
+#confetti { position:fixed; inset:0; pointer-events:none; z-index:9999; display:none; }
+
+/* COVER */
+#p0 { background:radial-gradient(ellipse at 50% 40%,#2a1c08,#100c04); }
+.cover-inner {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding:40px 20px;
+}
+.ci-icon { font-size:56px; display:block; margin-bottom:18px; animation:bob 3s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+.ci-eyebrow { font-family:'Special Elite',cursive; color:#c8a96e; font-size:10px; letter-spacing:5px; margin-bottom:12px; }
+.ci-title { font-family:'Playfair Display',serif; color:#f5edda; font-size:clamp(52px,13vw,88px); font-weight:900; font-style:italic; line-height:.9; text-shadow:0 0 50px rgba(200,169,110,.3); margin-bottom:6px; }
+.ci-title span { color:#c8a96e; }
+.ci-sub { font-family:'Playfair Display',serif; font-style:italic; color:#c8a96e; font-size:clamp(13px,3vw,17px); letter-spacing:2px; margin-bottom:32px; }
+.ci-rule { width:140px; height:1px; background:linear-gradient(90deg,transparent,#c8a96e,transparent); margin:0 auto 28px; }
+.grp-box { background:rgba(200,169,110,.08); border:1px solid rgba(200,169,110,.3); padding:28px 24px; max-width:420px; width:100%; }
+.grp-lbl { font-family:'Special Elite',cursive; color:#c8a96e; font-size:9px; letter-spacing:4px; display:block; margin-bottom:12px; }
+.grp-inp { width:100%; background:transparent; border:none; border-bottom:2px solid #c8a96e; padding:12px 6px; font-family:'Playfair Display',serif; font-size:20px; font-style:italic; color:#f5edda; text-align:center; outline:none; margin-bottom:6px; }
+.grp-inp::placeholder { color:rgba(200,169,110,.35); font-size:14px; }
+.grp-err { color:#ef5350; font-family:'Special Elite',cursive; font-size:11px; display:none; margin-bottom:8px; }
+.btn-gold { width:100%; padding:16px; cursor:pointer; border:none; background:linear-gradient(135deg,#c8a96e,#a07840); color:#100c04; font-family:'Special Elite',cursive; font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-top:6px; }
+.btn-gold:active { opacity:.8; }
+
+/* TOPBAR */
+.topbar { position:sticky; top:0; z-index:50; background:#1e1208; border-bottom:2px solid #c8a96e; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
+.tb-grp { font-family:'Special Elite',cursive; color:#c8a96e; font-size:11px; letter-spacing:2px; min-width:80px; }
+.tb-title { font-family:'Playfair Display',serif; color:#f5edda; font-size:15px; font-style:italic; }
+.tb-dots { display:flex; gap:5px; min-width:80px; justify-content:flex-end; }
+.dot { width:10px; height:10px; border-radius:50%; border:1px solid rgba(200,169,110,.4); background:transparent; transition:all .3s; }
+.dot.done { background:#c8a96e; border-color:#c8a96e; }
+
+/* HUB */
+#p1 { background:#f5edda; }
+.hub-inner { max-width:800px; margin:0 auto; padding:22px 16px 48px; }
+.brief { background:#fdf7ec; border:1px solid #ede0c4; padding:22px; margin-bottom:20px; box-shadow:3px 3px 0 rgba(0,0,0,.07); position:relative; }
+.brief h3 { font-family:'Playfair Display',serif; font-size:16px; font-style:italic; color:#1e1208; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #ede0c4; }
+.brief p, .brief li { font-size:13px; line-height:2; color:#1e1208; }
+.brief ul { padding-left:18px; }
+.callout { border-left:3px solid #c8a96e; background:rgba(200,169,110,.1); padding:10px 14px; margin:10px 0; font-style:italic; font-size:13px; line-height:1.9; }
+.stamp { position:absolute; top:14px; right:14px; border:2px solid #8b1a1a; color:#8b1a1a; font-family:'Special Elite',cursive; font-size:8px; letter-spacing:2px; padding:4px 6px; transform:rotate(-7deg); opacity:.6; line-height:1.6; text-align:center; }
+
+/* PARCOURS BADGE */
+.parcours-strip {
+  background:#1e1208; border:1px solid rgba(200,169,110,.3);
+  padding:12px 16px; margin-bottom:20px;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.parcours-strip-label { font-family:'Special Elite',cursive; color:#c8a96e; font-size:8px; letter-spacing:3px; flex-shrink:0; }
+.p-step { display:flex; align-items:center; gap:6px; font-family:'Special Elite',cursive; font-size:9px; color:rgba(200,169,110,.6); }
+.p-step.rdc  { color:#6abf6a; }
+.p-step.e1   { color:#6a9abf; }
+.p-step.e12  { color:#a06abf; }
+.p-step span { font-size:10px; }
+.p-arrow { color:rgba(200,169,110,.3); font-size:10px; }
+
+/* ENV GRID */
+.env-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:12px; }
+.ecard { background:#fdf7ec; border:1px solid #ede0c4; padding:16px 14px; min-height:125px; display:flex; flex-direction:column; justify-content:space-between; position:relative; transition:transform .2s,box-shadow .2s; user-select:none; }
+.ecard.e-open { border-color:rgba(200,169,110,.7); cursor:pointer; }
+.ecard.e-open:hover { transform:translateY(-3px); box-shadow:3px 5px 14px rgba(0,0,0,.12); }
+.ecard.e-done { border-color:#1a4a2e; background:#f0f7f2; cursor:pointer; }
+.ecard.e-done:hover { transform:translateY(-3px); box-shadow:3px 5px 12px rgba(0,0,0,.1); }
+.ecard.e-locked { opacity:.36; cursor:not-allowed; }
+.ecard.e-finale { border-color:#c8a96e; background:linear-gradient(135deg,#fdf7ec,#f5e8cc); cursor:pointer; }
+.ecard.e-finale:hover { transform:translateY(-3px); box-shadow:3px 5px 14px rgba(200,169,110,.25); }
+.ec-num { position:absolute; top:5px; right:10px; font-family:'Playfair Display',serif; font-size:42px; font-style:italic; color:#c8a96e; opacity:.11; line-height:1; pointer-events:none; }
+.etag { display:inline-block; font-family:'Special Elite',cursive; font-size:8px; letter-spacing:2px; padding:2px 7px; margin-bottom:6px; }
+.t-open   { background:#c8a96e; color:#fff; }
+.t-done   { background:#1a4a2e; color:#fff; }
+.t-locked { background:rgba(0,0,0,.1); color:#8a7a6a; }
+.t-fin    { background:#c8a96e; color:#100c04; }
+.ec-icon { font-size:22px; display:block; margin-bottom:4px; }
+.ec-name { font-family:'Playfair Display',serif; font-size:14px; font-style:italic; color:#1e1208; margin-bottom:3px; }
+.ec-room { font-family:'Special Elite',cursive; font-size:8px; letter-spacing:1px; color:#8a7a6a; line-height:1.5; }
+.ec-level {
+  font-family:'Special Elite',cursive; font-size:7px; letter-spacing:1px;
+  padding:2px 6px; margin-top:5px; display:inline-block;
+}
+.lv-rdc  { background:#1e4a1e; color:#a8d5a8; }
+.lv-e1   { background:#1c2b4a; color:#a8c0d5; }
+.lv-e12  { background:#3a1c4a; color:#c8a8d5; }
+
+/* CLUE PAGES */
+.clue-pg { background:#f5edda; }
+.clue-inner { max-width:640px; margin:0 auto; padding:22px 16px 48px; }
+.clue-card { background:#fdf7ec; border:2px solid #c8a96e; padding:26px 22px; box-shadow:4px 4px 0 rgba(0,0,0,.09); }
+.clue-hdr { text-align:center; margin-bottom:20px; }
+.c-badge { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:#c8a96e; color:#fff; font-family:'Playfair Display',serif; font-size:19px; font-style:italic; margin-bottom:8px; }
+.c-en { font-family:'Playfair Display',serif; font-size:21px; font-style:italic; color:#1e1208; }
+.c-fr { font-family:'Special Elite',cursive; font-size:9px; letter-spacing:3px; color:#8a7a6a; margin-top:2px; }
+.c-location {
+  display:inline-flex; align-items:center; gap:6px; margin-top:8px;
+  font-family:'Special Elite',cursive; font-size:8px; letter-spacing:2px;
+  padding:4px 10px;
+}
+.sec { margin-bottom:16px; }
+.s-lbl { font-family:'Special Elite',cursive; font-size:8px; letter-spacing:4px; color:#c8a96e; display:flex; align-items:center; gap:6px; margin-bottom:7px; }
+.s-lbl::after { content:''; flex:1; height:1px; background:rgba(200,169,110,.25); }
+.s-box { background:rgba(200,169,110,.07); border-left:3px solid #c8a96e; padding:11px 13px; font-size:13px; line-height:1.9; color:#1e1208; }
+.s-box strong { color:#1c2b4a; }
+.riddle { background:rgba(30,18,8,.04); border:1px dashed rgba(200,169,110,.45); padding:18px; font-family:'Playfair Display',serif; font-style:italic; font-size:14px; line-height:2.1; color:#1e1208; }
+.riddle p { margin-bottom:2px; }
+.riddle-q { margin-top:12px; font-family:'Special Elite',cursive; font-style:normal; font-size:11px; color:#c8a96e; letter-spacing:2px; }
+.ans-inp { width:100%; background:transparent; border:none; border-bottom:2px solid #c8a96e; padding:12px 4px; font-family:'Special Elite',cursive; font-size:20px; letter-spacing:3px; color:#1e1208; text-align:center; outline:none; margin-top:14px; }
+.ans-inp::placeholder { color:rgba(200,169,110,.35); font-size:13px; font-family:'Courier Prime',monospace; }
+.btn-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:13px; }
+.btn-submit { padding:13px 28px; cursor:pointer; border:none; background:linear-gradient(135deg,#c8a96e,#a07840); color:#100c04; font-family:'Special Elite',cursive; font-size:13px; letter-spacing:2px; text-transform:uppercase; }
+.btn-submit:active { opacity:.8; }
+.btn-hint { padding:10px 20px; cursor:pointer; border:1px solid #c8a96e; background:transparent; color:#c8a96e; font-family:'Special Elite',cursive; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+.btn-hint:active { background:#c8a96e; color:#100c04; }
+.btn-back { padding:10px 20px; cursor:pointer; border:1px solid #8a7a6a; background:transparent; color:#8a7a6a; font-family:'Special Elite',cursive; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+.btn-back:active { border-color:#c8a96e; color:#c8a96e; }
+.feedback { text-align:center; padding:12px 16px; font-family:'Special Elite',cursive; font-size:12px; letter-spacing:1px; margin-top:12px; display:none; line-height:1.7; }
+.fb-ok  { background:rgba(26,74,46,.1);  color:#1a4a2e; border:1px solid #1a4a2e; }
+.fb-err { background:rgba(139,26,26,.1); color:#8b1a1a; border:1px solid #8b1a1a; }
+.hint-box { background:rgba(200,169,110,.07); border:1px solid rgba(200,169,110,.25); padding:12px 14px; font-size:13px; font-style:italic; line-height:1.9; color:#1e1208; margin-top:10px; display:none; }
+.back-row { text-align:center; margin-top:16px; }
+
+/* NEXT DIRECTION BANNER */
+.next-dir {
+  background:#1e1208; border-left:4px solid #c8a96e;
+  padding:12px 16px; margin-top:14px;
+  font-family:'Special Elite',cursive; font-size:11px;
+  color:#c8a96e; letter-spacing:1px; line-height:1.7;
+  display:none;
+}
+
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 15%{transform:translateX(-10px)}
+  30%{transform:translateX(10px)} 45%{transform:translateX(-8px)}
+  60%{transform:translateX(8px)}  75%{transform:translateX(-4px)} 90%{transform:translateX(4px)}
+}
+.do-shake { animation:shake 0.5s ease; }
+
+/* FINALE */
+#p8 { background:radial-gradient(ellipse at center,#1e1508,#100c04); }
+.fin-inner { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+.fin-wrap { max-width:560px; width:100%; }
+.fin-box { border:2px solid #c8a96e; padding:38px 28px; margin-bottom:20px; position:relative; }
+.fin-box::before { content:''; position:absolute; inset:8px; border:1px solid rgba(200,169,110,.2); pointer-events:none; }
+.fin-trophy { font-size:64px; display:block; margin-bottom:12px; }
+.fin-lbl { font-family:'Special Elite',cursive; font-size:9px; letter-spacing:5px; color:#c8a96e; }
+.fin-title { font-family:'Playfair Display',serif; color:#f5edda; font-size:clamp(24px,7vw,40px); font-style:italic; font-weight:900; margin:10px 0 14px; text-shadow:0 0 30px rgba(200,169,110,.4); }
+.fin-msg { font-family:'Playfair Display',serif; font-size:14px; font-style:italic; color:#c4a87a; line-height:2.1; margin-bottom:18px; }
+.fin-msg strong { color:#c8a96e; }
+.fin-rule { width:110px; height:1px; background:linear-gradient(90deg,transparent,#c8a96e,transparent); margin:0 auto 16px; }
+.fin-close { font-family:'Playfair Display',serif; font-style:italic; color:#8a7a6a; font-size:13px; line-height:2; }
+.diploma { background:#f5edda; border:3px double #c8a96e; padding:28px 22px; text-align:center; }
+.d-mus { font-family:'Special Elite',cursive; font-size:9px; letter-spacing:4px; color:#c8a96e; margin-bottom:10px; }
+.d-h   { font-family:'Playfair Display',serif; font-size:24px; font-style:italic; color:#1e1208; margin-bottom:4px; }
+.d-sub { font-family:'Playfair Display',serif; font-size:12px; font-style:italic; color:#8a7a6a; margin-bottom:12px; }
+.d-rule{ width:90px; height:1px; background:linear-gradient(90deg,transparent,#c8a96e,transparent); margin:0 auto 12px; }
+.d-aw  { font-family:'Special Elite',cursive; font-size:10px; letter-spacing:2px; color:#1e1208; margin-bottom:4px; }
+.d-grp { font-family:'Playfair Display',serif; font-size:21px; font-style:italic; color:#c8a96e; margin-bottom:8px; }
+.d-body{ font-family:'Special Elite',cursive; font-size:10px; color:#1e1208; line-height:2.1; margin-bottom:14px; }
+.d-foot{ display:flex; justify-content:space-around; font-family:'Special Elite',cursive; font-size:9px; color:#8a7a6a; border-top:1px solid #ede0c4; padding-top:10px; }
+@media(max-width:480px){
+  .env-grid{ grid-template-columns:1fr 1fr; }
+  .clue-card{ padding:18px 14px; }
+  .fin-box{ padding:26px 16px; }
+  .diploma{ padding:22px 14px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<!-- P0 COVER -->
+<div class="page page-active" id="p0">
+  <div class="cover-inner">
+    <span class="ci-icon">🔍</span>
+    <div class="ci-eyebrow">Musée des Arts et Métiers · Paris · Pedagogical Investigation</div>
+    <h1 class="ci-title">LOST<br><span>INVENTIONS</span></h1>
+    <p class="ci-sub">The Mystery of the Missing Machines</p>
+    <div class="ci-rule"></div>
+    <div class="grp-box">
+      <span class="grp-lbl">Enter your team name</span>
+      <input class="grp-inp" id="gi" type="text" placeholder="e.g. The Explorers" maxlength="30"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();doStart();}">
+      <div class="grp-err" id="ge">⚠ Please enter your team name.</div>
+      <button class="btn-gold" onclick="doStart()">▶ &nbsp;Start the Investigation</button>
+    </div>
+  </div>
+</div>
+
+<!-- P1 HUB -->
+<div class="page" id="p1">
+  <div class="topbar">
+    <div class="tb-grp" id="tb-grp">Team</div>
+    <div class="tb-title">Lost Inventions</div>
+    <div class="tb-dots" id="tb-dots"></div>
+  </div>
+  <div class="hub-inner">
+    <div class="brief">
+      <div class="stamp">FILE<br>N°1847<br>URGENT</div>
+      <h3>🗂 Mission File</h3>
+      <p>La nuit du 12 novembre, <strong>« L'Archiviste »</strong> a effacé les cartels de six grandes inventions. Les objets sont encore là — mais leurs secrets ont disparu.</p>
+      <div class="callout">Votre mission : trouver chaque objet dans le musée et répondre à l'énigme en anglais.</div>
+      <ul>
+        <li>Appelez le <strong>professeur</strong> pour obtenir le code de la <strong>1ère enveloppe</strong>.</li>
+        <li>Après chaque bonne réponse, la suivante s'ouvre <strong>automatiquement</strong>.</li>
+        <li>L'équipe la plus rapide reçoit le titre de <em>Chief Detectives</em> 🏆</li>
+      </ul>
+    </div>
+
+    <!-- PARCOURS STRIP -->
+    <div class="parcours-strip">
+      <span class="parcours-label" style="font-family:'Special Elite',cursive;color:#c8a96e;font-size:8px;letter-spacing:3px;flex-shrink:0;">PARCOURS :</span>
+      <span class="p-step rdc"><span>🟢</span> RDC — Instruments</span>
+      <span class="p-arrow">→</span>
+      <span class="p-step e1"><span>🔵</span> 1er — Communication</span>
+      <span class="p-arrow">→</span>
+      <span class="p-step e1"><span>🔵</span> 1er — Communication</span>
+      <span class="p-arrow">→</span>
+      <span class="p-step e12"><span>🟣</span> Énergie</span>
+      <span class="p-arrow">→</span>
+      <span class="p-step rdc"><span>🟢</span> RDC — l'Église</span>
+      <span class="p-arrow">→</span>
+      <span class="p-step rdc"><span>🟢</span> RDC — l'Église</span>
+    </div>
+
+    <div class="env-grid" id="env-grid"></div>
+  </div>
+</div>
+
+<!-- P2–P7 CLUE PAGES -->
+<div class="page clue-pg" id="p2"></div>
+<div class="page clue-pg" id="p3"></div>
+<div class="page clue-pg" id="p4"></div>
+<div class="page clue-pg" id="p5"></div>
+<div class="page clue-pg" id="p6"></div>
+<div class="page clue-pg" id="p7"></div>
+
+<!-- P8 FINALE -->
+<div class="page" id="p8">
+  <div class="fin-inner">
+    <div class="fin-wrap">
+      <div class="fin-box">
+        <span class="fin-trophy">🏆</span>
+        <div class="fin-lbl">MISSION COMPLETE</div>
+        <h2 class="fin-title">Well done,<br><span id="fin-grp" style="color:#c8a96e;">Detectives</span>!</h2>
+        <p class="fin-msg">
+          You found all six lost inventions:<br>
+          <strong>The Pascaline · Niépce's Camera<br>
+          Morse's Telegraph · Gramme's Dynamo<br>
+          Ader's Plane · Foucault's Pendulum</strong>
+        </p>
+        <div class="fin-rule"></div>
+        <p class="fin-close">"L'Archiviste" was right about one thing:<br>these objects deserved to be rediscovered.</p>
+      </div>
+      <div class="diploma">
+        <div class="d-mus">MUSÉE NATIONAL DES ARTS ET MÉTIERS · PARIS</div>
+        <div class="d-h">Certificate</div>
+        <div class="d-sub">of Chief Detective — Lost Inventions</div>
+        <div class="d-rule"></div>
+        <div class="d-aw">Awarded to the team</div>
+        <div class="d-grp" id="dip-grp">—</div>
+        <div class="d-body">
+          for successfully solving all six mysteries<br>
+          during the <em>Lost Inventions</em> investigation<br>
+          at the Musée national des Arts et Métiers, Paris.
+        </div>
+        <div class="d-foot">
+          <span>Date: _____ / _____ / _____</span>
+          <span>M. BELOUFA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   CLUE DATA — parcours logique sans aller-retour
+   1. RDC   : Instruments scientifiques  → Pascaline
+   2. 1er   : Communication              → Niépce / Photographie
+   3. 1er   : Communication (même salle) → Morse / Télégraphe
+   4. 1-2e  : Énergie                    → Gramme / Dynamo
+   5. RDC   : Église / Transports        → Ader / Avion III
+   6. RDC   : Église (même nef)          → Foucault / Pendule
+══════════════════════════════════════ */
+var CLUES = [
+  {
+    n:1, icon:'⚙️',
+    en:'The Thinking Machine', fr:'La Machine à Calculer',
+    levelKey:'rdc', levelLabel:'Rez-de-chaussée',
+    section:'Instruments scientifiques',
+    room:'Rez-de-chaussée — Instruments scientifiques',
+    where:'<strong>Rez-de-chaussée — salle Instruments scientifiques.</strong><br>Dès l\'entrée, cherchez les premières vitrines. Repérez de petits objets mécaniques en cuivre avec des rouages et des cadrans numérotés.',
+    riddle:[
+      'Find the small rectangular metal box with tiny geared wheels.',
+      'It can add numbers. It can subtract numbers — all by itself.',
+      'It was invented in the 17th century by a young man of 19.',
+      'His surname is also the name of a famous maths triangle.',
+      'The machine has a feminine name — derived from his surname.'
+    ],
+    q:'❓ What is the name of this machine?',
+    ok:['PASCALINE','LA PASCALINE'],
+    hint:'La machine porte le prénom féminin dérivé de Blaise P…',
+    next:'➡ Montez au 1er étage — entrez dans la salle Communication.'
+  },
+  {
+    n:2, icon:'📷',
+    en:'The Captured Image', fr:"L'Image Capturée",
+    levelKey:'e1', levelLabel:'1er étage',
+    section:'Communication',
+    room:'1er étage — Communication',
+    where:'<strong>1er étage — salle Communication.</strong><br>Cherchez de grands appareils en bois noir montés sur des trépieds, avec de gros objectifs en verre. Section photographie ancienne.',
+    riddle:[
+      'Stand in front of the large black wooden camera on a tripod.',
+      'It has no film. It used a metal plate coated in silver.',
+      'The first photograph in history was taken in France in 1826.',
+      'The photographer needed 8 hours of sunlight for one image.',
+      'His first name is Nicéphore. His family name starts with N.'
+    ],
+    q:"❓ What is the inventor's family name?",
+    ok:['NIEPCE','NIÉPCE','NICEPHORE NIEPCE','NICÉPHORE NIÉPCE'],
+    hint:'Il s\'appelait Nicéphore. Il a travaillé plus tard avec Daguerre.',
+    next:'➡ Restez dans la salle Communication — cherchez les télégraphes.'
+  },
+  {
+    n:3, icon:'📡',
+    en:'The Invisible Messenger', fr:'Le Messager Invisible',
+    levelKey:'e1', levelLabel:'1er étage',
+    section:'Communication — section télégraphie',
+    room:'1er étage — Communication (télégraphie)',
+    where:'<strong>1er étage — salle Communication, section télégraphie.</strong><br>Dans la même salle. Cherchez un appareil avec un cadran circulaire et des lettres autour, relié à des fils électriques. Il ressemble à une grande boussole.',
+    riddle:[
+      'Look at the device with a round dial and letters around the edge.',
+      'It sends messages using only dots and dashes — without moving.',
+      'It was used in train stations before the telephone.',
+      'It is called a telegraph.',
+      'The code it uses has the same name as its inventor.'
+    ],
+    q:'❓ What is the name of this code?',
+    ok:['MORSE','CODE MORSE','LE CODE MORSE'],
+    hint:'L\'inventeur s\'appelait Samuel. Le code porte son nom de famille.',
+    next:'➡ Continuez dans l\'étage — suivez le fléchage salle Énergie.'
+  },
+  {
+    n:4, icon:'⚡',
+    en:'The Thread of Light', fr:'Le Fil de la Lumière',
+    levelKey:'e12', levelLabel:'1er–2e étage',
+    section:'Énergie',
+    room:'Salle Énergie (suivez le fléchage)',
+    where:'<strong>Salle Énergie (1er ou 2e étage, suivez le fléchage).</strong><br>Cherchez une grande machine cylindrique en métal poli, enroulée de fils de cuivre dorés, posée sur un socle. Elle se trouve dans la section électricité.',
+    riddle:[
+      'Look at the large metal cylinder wrapped in copper wire.',
+      'This machine transforms movement into electricity.',
+      'It is called the Gramme machine.',
+      'It made public street lighting possible in Paris in 1878.',
+      'The inventor was Belgian. His first name starts with the letter Z.'
+    ],
+    q:"❓ What is the inventor's first name?",
+    ok:['ZENOBE','ZÉNOBE','ZENOBE GRAMME','ZÉNOBE GRAMME'],
+    hint:'Son prénom commence par Z. Il ressemble au prénom Zénobie.',
+    next:'➡ Redescendez au rez-de-chaussée → suivez Transports → entrez dans l\'Église.'
+  },
+  {
+    n:5, icon:'✈️',
+    en:'The Flying Wing', fr:"L'Aile Volante",
+    levelKey:'rdc', levelLabel:'Rez-de-chaussée',
+    section:"Transports — l'Église",
+    room:"Rez-de-chaussée — l'Église (Transports)",
+    where:'<strong>Rez-de-chaussée — l\'Église (ancienne chapelle), section Transports.</strong><br>Entrez dans la nef de l\'ancienne église. Levez la tête : un grand engin en bois et en toile est suspendu sous les voûtes. Il a deux ailes rigides, pas de moteur.',
+    riddle:[
+      'Look up at the ceiling of the church nave.',
+      'You can see a large wooden flying machine with two rigid wings.',
+      'It has no engine. The pilot lay underneath it.',
+      'It flew in France in the 1890s — before the Wright Brothers.',
+      'The inventor\'s first name is Clément.',
+      'His family name sounds like the word for "air".'
+    ],
+    q:"❓ What is the inventor's family name?",
+    ok:['ADER','CLEMENT ADER','CLÉMENT ADER'],
+    hint:'Son nom commence par A. Il a construit l\'Avion III.',
+    next:'➡ Restez dans l\'Église — cherchez le long fil qui descend du plafond.'
+  },
+  {
+    n:6, icon:'🌀',
+    en:'The Swinging Secret', fr:'Le Secret du Pendule',
+    levelKey:'rdc', levelLabel:'Rez-de-chaussée',
+    section:"L'Église — centre de la nef",
+    room:"Rez-de-chaussée — l'Église",
+    where:'<strong>Rez-de-chaussée — l\'Église, au centre de la nef.</strong><br>Toujours dans l\'Église. Un très long fil métallique descend de la voûte avec une lourde boule dorée au bout. Il se balance lentement, sans jamais s\'arrêter.',
+    riddle:[
+      'Look at the very long pendulum hanging from the vaulted ceiling.',
+      'It swings slowly and silently. It never stops.',
+      'The direction it swings changes over time — very slowly.',
+      'This proves that the Earth is rotating on its axis.',
+      'The inventor was a French physicist. His first name is Léon.',
+      'His family name starts with the letter F.'
+    ],
+    q:"❓ What is the inventor's family name?",
+    ok:['FOUCAULT','LEON FOUCAULT','LÉON FOUCAULT'],
+    hint:'Son prénom est Léon. Son nom commence par F. Il a installé ce pendule à Paris en 1851.',
+    next:null
+  }
+];
+
+var CODE1    = 'musee25';
+var grpName  = '';
+var unlocked = [false,false,false,false,false,false];
+var solved   = [false,false,false,false,false,false];
+var navStack = ['p0'];
+var busy     = false;
+
+var LV_CLASS = { rdc:'lv-rdc', e1:'lv-e1', e12:'lv-e12' };
+var LV_COLOR = { rdc:'#1e4a1e', e1:'#1c2b4a', e12:'#3a1c4a' };
+
+/* ── NAVIGATION ── */
+function goTo(toId) {
+  if (busy) return;
+  var fromEl = document.querySelector('.page-active');
+  var toEl   = document.getElementById(toId);
+  if (!fromEl || !toEl || fromEl === toEl) return;
+  busy = true;
+  fromEl.classList.add('page-exit');
+  fromEl.classList.remove('page-active');
+  toEl.classList.add('page-active');
+  setTimeout(function(){ fromEl.classList.remove('page-exit'); busy = false; }, 420);
+}
+
+function goBack() {
+  if (navStack.length <= 1) return;
+  var current = navStack.pop();
+  var target  = navStack[navStack.length - 1];
+  buildHub();
+  if (busy) return;
+  busy = true;
+  var fromEl = document.getElementById(current);
+  var toEl   = document.getElementById(target);
+  toEl.style.transform = 'translateX(-100%)';
+  toEl.classList.add('page-active');
+  fromEl.classList.remove('page-active');
+  toEl.getBoundingClientRect();
+  toEl.style.transition = 'none';
+  toEl.getBoundingClientRect();
+  toEl.style.transition = '';
+  toEl.style.transform  = '';
+  fromEl.style.transform = 'translateX(100%)';
+  setTimeout(function(){ fromEl.style.transform = ''; busy = false; }, 420);
+}
+
+function push(toId) { navStack.push(toId); goTo(toId); }
+
+/* ── START ── */
+function doStart() {
+  var v = document.getElementById('gi').value.trim();
+  if (!v) { document.getElementById('ge').style.display = 'block'; return; }
+  document.getElementById('ge').style.display = 'none';
+  grpName = v;
+  document.getElementById('tb-grp').textContent  = grpName;
+  document.getElementById('fin-grp').textContent  = grpName;
+  document.getElementById('dip-grp').textContent  = grpName;
+  buildHub();
+  push('p1');
+}
+
+/* ── HUB ── */
+function buildHub() {
+  var dotsEl = document.getElementById('tb-dots');
+  dotsEl.innerHTML = '';
+  for (var i = 0; i < 6; i++) {
+    var d = document.createElement('div');
+    d.className = 'dot' + (solved[i] ? ' done' : '');
+    dotsEl.appendChild(d);
+  }
+  var grid = document.getElementById('env-grid');
+  grid.innerHTML = '';
+  for (var i = 0; i < 6; i++) {
+    (function(idx) {
+      var c      = CLUES[idx];
+      var isDone = solved[idx];
+      var isOpen = unlocked[idx];
+      var card   = document.createElement('div');
+      card.className = 'ecard ' + (isDone ? 'e-done' : isOpen ? 'e-open' : 'e-locked');
+      var tCls = isDone ? 't-done' : isOpen ? 't-open' : 't-locked';
+      var tTxt = isDone ? 'SOLVED ✓' : isOpen ? 'OPEN' : 'LOCKED 🔒';
+      var icon = isDone ? '✅' : isOpen ? c.icon : '🔒';
+      card.innerHTML =
+        '<div class="ec-num">'+(idx+1)+'</div>'+
+        '<div>'+
+          '<span class="etag '+tCls+'">'+tTxt+'</span><br>'+
+          '<span class="ec-icon">'+icon+'</span>'+
+          '<div class="ec-name">'+c.en+'</div>'+
+        '</div>'+
+        '<div>'+
+          '<div class="ec-room">'+c.room+'</div>'+
+          '<span class="ec-level '+LV_CLASS[c.levelKey]+'">'+c.levelLabel+'</span>'+
+        '</div>';
+      if (isDone || isOpen) {
+        card.onclick = function(){ openClue(idx); };
+      } else {
+        card.onclick = function(){
+          if (idx === 0) {
+            var code = prompt('📞 Appelez votre professeur !\nEntrez le code pour ouvrir l\'Enveloppe 1 :');
+            if (code !== null && code.trim().toLowerCase() === CODE1) {
+              unlocked[0] = true; buildHub(); openClue(0);
+            } else if (code !== null) {
+              alert('Code incorrect. Demandez à nouveau au professeur.');
+            }
+          } else {
+            alert('🔒 Cette enveloppe est verrouillée.\nTerminez la précédente d\'abord !');
+          }
+        };
+      }
+      grid.appendChild(card);
+    })(i);
+  }
+  /* finale card */
+  var allDone = solved.every(function(s){ return s; });
+  var fin = document.createElement('div');
+  fin.className = 'ecard ' + (allDone ? 'e-finale' : 'e-locked');
+  fin.innerHTML =
+    '<div class="ec-num">7</div>'+
+    '<div>'+
+      '<span class="etag '+(allDone?'t-fin':'t-locked')+'">'+(allDone?'OPEN 🏆':'LOCKED 🔒')+'</span><br>'+
+      '<span class="ec-icon">'+(allDone?'🏆':'🔒')+'</span>'+
+      '<div class="ec-name">The Final Verdict</div>'+
+    '</div>'+
+    '<div class="ec-room">Unlocked after all 6 mysteries</div>';
+  if (allDone) { fin.onclick = function(){ push('p8'); setTimeout(launchConfetti,200); }; }
+  grid.appendChild(fin);
+}
+
+/* ── CLUE PAGE ── */
+function openClue(idx) {
+  var c    = CLUES[idx];
+  var pgId = 'p' + (idx + 2);
+  var el   = document.getElementById(pgId);
+  var dotsH = '';
+  for (var i = 0; i < 6; i++) dotsH += '<div class="dot'+(solved[i]?' done':'')+'"></div>';
+  var rdlH = c.riddle.map(function(l){ return '<p>'+l+'</p>'; }).join('');
+  var doneBtn = solved[idx]
+    ? '<div style="text-align:center;margin-top:14px;"><button class="btn-submit" onclick="goBack()">→ Mission Board</button></div>'
+    : '';
+
+  var lvStyle = 'background:'+LV_COLOR[c.levelKey]+';color:#fff;padding:3px 10px;font-family:\'Special Elite\',cursive;font-size:8px;letter-spacing:2px;display:inline-block;margin-top:6px;';
+
+  var nextHTML = c.next
+    ? '<div class="next-dir" id="nextdir'+idx+'">'+c.next+'</div>'
+    : '';
+
+  el.innerHTML =
+    '<div class="topbar">'+
+      '<button class="btn-back" onclick="goBack()">← Back</button>'+
+      '<div class="tb-title">'+c.en+'</div>'+
+      '<div class="tb-dots">'+dotsH+'</div>'+
+    '</div>'+
+    '<div class="clue-inner">'+
+      '<div class="clue-card" id="cc'+idx+'">'+
+        '<div class="clue-hdr">'+
+          '<div class="c-badge">'+c.n+'</div>'+
+          '<div class="c-en">'+c.en+'</div>'+
+          '<div class="c-fr">'+c.fr.toUpperCase()+'</div>'+
+          '<span style="'+lvStyle+'">'+c.levelLabel+' — '+c.section+'</span>'+
+        '</div>'+
+        '<div class="sec">'+
+          '<div class="s-lbl">📍 Où aller</div>'+
+          '<div class="s-box">'+c.where+'</div>'+
+        '</div>'+
+        '<div class="sec">'+
+          '<div class="s-lbl">🇬🇧 The Riddle</div>'+
+          '<div class="riddle">'+rdlH+'<div class="riddle-q">'+c.q+'</div></div>'+
+        '</div>'+
+        '<div class="sec">'+
+          '<div class="s-lbl">✍ Your Answer</div>'+
+          '<input class="ans-inp" id="ans'+idx+'" type="text" placeholder="Write your answer here…"'+
+            ' oninput="this.value=this.value.toUpperCase()"'+
+            ' onkeydown="if(event.key===\'Enter\'){event.preventDefault();doSubmit('+idx+');}">'+
+          '<div class="btn-row">'+
+            '<button class="btn-submit" onclick="doSubmit('+idx+')">✓ Submit</button>'+
+            '<button class="btn-hint" onclick="toggleHint('+idx+')">💡 Hint</button>'+
+          '</div>'+
+          '<div class="feedback" id="fb'+idx+'"></div>'+
+          '<div class="hint-box" id="hb'+idx+'">'+c.hint+'</div>'+
+          nextHTML+
+          doneBtn+
+        '</div>'+
+      '</div>'+
+      '<div class="back-row"><button class="btn-back" onclick="goBack()">← Mission Board</button></div>'+
+    '</div>';
+
+  push(pgId);
+}
+
+function toggleHint(idx) {
+  var h = document.getElementById('hb'+idx);
+  if (h) h.style.display = (h.style.display === 'block') ? 'none' : 'block';
+}
+
+/* ── SUBMIT ── */
+function doSubmit(idx) {
+  var inp = document.getElementById('ans'+idx);
+  if (!inp) return;
+  var val = inp.value.trim().toUpperCase();
+  var c   = CLUES[idx];
+  var fb  = document.getElementById('fb'+idx);
+  var ok  = c.ok.some(function(a){ return val === a || val.indexOf(a) !== -1; });
+
+  fb.style.display = 'block';
+  if (ok) {
+    fb.className = 'feedback fb-ok';
+    fb.innerHTML = '✓ Correct! Well done! Go back to the Mission Board for the next envelope.';
+    solved[idx] = true;
+    if (idx + 1 < 6) unlocked[idx + 1] = true;
+    launchConfetti();
+
+    /* show next direction banner */
+    var nd = document.getElementById('nextdir'+idx);
+    if (nd) nd.style.display = 'block';
+
+    /* add next button */
+    if (!document.getElementById('nb'+idx)) {
+      var nb = document.createElement('div');
+      nb.id = 'nb'+idx;
+      nb.style.textAlign = 'center';
+      nb.style.marginTop = '14px';
+      nb.innerHTML = '<button class="btn-submit" onclick="goBack()">→ Mission Board</button>';
+      var hb = document.getElementById('hb'+idx);
+      if (hb && hb.parentNode) hb.parentNode.appendChild(nb);
+    }
+    if (solved.every(function(s){ return s; })) {
+      setTimeout(function(){ push('p8'); setTimeout(launchConfetti,200); }, 2000);
+    }
+  } else {
+    fb.className = 'feedback fb-err';
+    fb.innerHTML = '✗ Not quite right. Look at the object again, or ask for a hint.';
+    var card = document.getElementById('cc'+idx);
+    if (card) {
+      card.classList.remove('do-shake');
+      card.getBoundingClientRect();
+      card.classList.add('do-shake');
+      setTimeout(function(){ card.classList.remove('do-shake'); }, 550);
+    }
+  }
+}
+
+/* ── CONFETTI ── */
+function launchConfetti() {
+  var cv = document.getElementById('confetti');
+  cv.style.display = 'block';
+  cv.width  = window.innerWidth;
+  cv.height = window.innerHeight;
+  var ctx  = cv.getContext('2d');
+  var cols = ['#c8a96e','#f5edda','#ffd700','#ff6b6b','#4caf50','#2196f3','#ff9800','#e91e63','#9c27b0','#00bcd4'];
+  var pp   = [];
+  for (var i = 0; i < 240; i++) {
+    pp.push({
+      x:Math.random()*cv.width, y:-30-Math.random()*cv.height*.4,
+      w:Math.random()*14+5, h:Math.random()*7+3,
+      c:cols[Math.floor(Math.random()*cols.length)],
+      r:Math.random()*360, rv:(Math.random()-.5)*9,
+      vx:(Math.random()-.5)*5, vy:Math.random()*5+3,
+      op:1, ci:Math.random()>.4
+    });
+  }
+  var f = 0;
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pp.forEach(function(p){
+      p.y+=p.vy; p.x+=p.vx; p.r+=p.rv;
+      if(f>90) p.op=Math.max(0,p.op-.015);
+      ctx.save(); ctx.globalAlpha=p.op;
+      ctx.translate(p.x+p.w/2,p.y+p.h/2);
+      ctx.rotate(p.r*Math.PI/180);
+      ctx.fillStyle=p.c;
+      if(p.ci){ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}
+      else{ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}
+      ctx.restore();
+    });
+    f++;
+    if(f<200) requestAnimationFrame(draw);
+    else cv.style.display='none';
+  }
+  draw();
+}
+</script>
+</body>
+</html>
