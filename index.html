@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Calories — Journal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Suivi des calories, macros, poids et eau — hors-ligne d'abord, synchronisé sur Google Drive.">
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+
+<!-- iOS home screen support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Calories">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADXUlEQVR42u3c0ZFTURBDQcVCYGRLXPBFBmDPlfpVnQAYNa61F5wfv37+llqKIwhoCWgJaAloAS0BLQEtAS0BLaAloCWgJaAloAW0BLQEtAS0BLSAloCWgJaAloAW0BLQV/r7GHvjFmkfD+itm6R9NKi37pKV0YDeuE0WxlpHvXSfLI0FdP+NsjTUIuq1G2VpJKD7b5W1gZZQL94qiwMB3XuvLI6zgHr1XlkdB+jOm2V1mGbUyzfL8jBA990ty6M0ol6/W9ZHaULtbgdBf+sBuuN2MUgHarc7BvrCA/T79wO6ALXbHQN96QH67fvFGN4UNt0yfu7zi5Wmu8Y7c/+WA2gHh/rojbN2aP+nsPveU6B9jQHQDgv1U7efAA3zzv3jmFA37VANGt69LeKAUDdtUgka1t1d4mhq2gdoAQ0z1Fd3qgENpa3+O2iYof70ZkALaN/gA/UcaK/OQH9ju/hbrqb9gBbQMEN9dUegBbQv3IYaaKCBfhG0HzeA/uae8eqspk2BFtBAAw00zFC/BtqrM9Df3hZoAQ000EADDTTQMHtjCLSABlpAAw000EADDTTQQAMtoH0Grcc39gotr9BAAw000EADDTTQQAtooAU00EADDTXMQAMNNNACGmgB7Y0h0Hd29c1J8s1JQAMNNNBAAw11O+bzoL1KA/3NLYEW0H7sgBlooIF+FTTUMH9rP6AF9JWDQG27j4H2Kg30N3aLv+lq2gxoAQ01zFe3qgENtZ0+AhpqmD+5D9ACGmqYr+5SCRrq3U3igDA3bVENGuq9HeKYMDfdfwI01Du3j8PC3HTzKdCrqJfuncUjr8BevHEcHOam206DbkW9fNc4fg9stzwA+tIQr8J2v2Ogr43yCmw3A7oCtls9APryUBcGc5sHQb8w3CcHdIsC0C8N+S+HXfwzz4B+eeCl56KbeBfvafoUKD6a8jR9pBmft3qaPp+P34Z5mn7ZFL/i9bRgfg401DDXgYYa5jrQYINcCRpqmOtAQw1zHWiwQa4EDfU25krQYG9CrgcN9hbkGdBgb0CeA70Me2nfOdBLsBd3nQXdDHt5z3nQLbjtB/TzuO0EtC9ABFrfQO6+QJ/H7w5AS0ALaAloCWgJaAloAS0BLQEtAS0BLaAloCWgJaAloDXRH8R5BtDvvpbsAAAAAElFTkSuQmCC">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAg0lEQVR42u2XsRGAMAwDNQuDsS1zwdFRgSScswv5Ll0kvYs4CbZjPzsXAhAAduNdijG7H6yZA8BowJg8SwlndHMB3HBVjxXhig8F8OeYyQBV3bN+WNk94xmAAARg3hxon4Qj7oL22/DN5AtE1VgATpW8CSuDrVdxdbj1L6gKzs9oDMAFzVmVBzhI7LAAAAAASUVORK5CYII=" type="image/png">
+
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand">🥗 Calories</div>
+    <button class="sync-pill" id="sync-pill" data-status="idle">
+      <span class="sync-dot"></span><span>Local</span>
+    </button>
+  </div>
+
+  <div class="screen active" id="screen-home"></div>
+  <div class="screen" id="screen-stats"></div>
+  <div class="screen" id="screen-weight"></div>
+  <div class="screen" id="screen-profile"></div>
+</div>
+
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="nav-btn active" data-nav="home"><span class="nav-icon">📔</span>Journal</button>
+    <button class="nav-btn" data-nav="stats"><span class="nav-icon">📊</span>Stats</button>
+    <button class="nav-btn" data-nav="weight"><span class="nav-icon">⚖️</span>Poids</button>
+    <button class="nav-btn" data-nav="profile"><span class="nav-icon">⚙️</span>Profil</button>
+  </div>
+</nav>
+
+<div class="sheet-backdrop" id="sheet-backdrop">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
